@@ -5,8 +5,8 @@ import sys
 import numpy
 import pandas as pd
 
-access = "KVnT9WKXqSPXW78McpUrBErHxbOeCR9v9XZGOAzE"# 본인 값으로 변경
-secret = "SmBGJ9EiYAKoqDQx7VAnnhxqJz9YHygZJyNnKfHJ"# 본인 값으로 변경
+access = "GFY3lx0X9KIqetJkusjVSG0GyJEy3TE11Efy5N2c"# 본인 값으로 변경
+secret = "FeUPOX901YWpg5UjsCwyWYT5Vlu2xxnzxdR193sG"# 본인 값으로 변경
 #access = "mTvDMECA2MwYG3qYmWeVxEuGduBJlPHawbF1M5MZ"# 본인 값으로 변경
 #secret = "xCqFWSWoZsi5zwRAZHK15sZqaNZ7wNjpEHOCugQg"# 본인 값으로 변경
 
@@ -118,6 +118,7 @@ while True:
             
         #1분봉 43개 가지고오기
         minute_ohlcv = pyupbit.get_ohlcv(KRW_coin, interval="minute1", count=200)
+        minute_ohlcv3 = pyupbit.get_ohlcv(KRW_coin, interval="minute3", count=200)
 
         i = 0
         j = 0
@@ -173,7 +174,8 @@ while True:
         #macd_price = numpy.zeros((200))
         #macd_price.reset_index(drop=True)
 
-        macd_price = get_macd(minute_ohlcv['close'], 26, 12, 9)
+        macd_price1 = get_macd(minute_ohlcv['close'], 26, 12, 9)
+        macd_price3 = get_macd(minute_ohlcv3['close'], 26, 12, 9)
 
         ##########################################################################
         #macd end                                                                #
@@ -187,28 +189,30 @@ while True:
         # 원화잔고
         current_krw = get_balance("KRW")
         
-
+        #data = "now_date : %s --- rsi : %s macd : %s / %s / %s\n" % (datetime.datetime.now(), rsi_arr[186], macd_price1.macd[196], macd_price1.macd[197], macd_price1.macd[198])
+        #file.write(data)
+        #file.flush()
 
         
         if krw == 0:
-            if (macd_price.macd[199] - macd_price.macd[198]) >= 0 and (macd_price.macd[198] - macd_price.macd[197]) >= 0 and (macd_price.macd[197] - macd_price.macd[196]) < 0 and macd_price.macd_osc[198] < 0 and rsi_arr[186] < 35:
+            if (macd_price1.macd[199] - macd_price1.macd[198]) >= 0 and (macd_price1.macd[198] - macd_price1.macd[197]) >= 0 and (macd_price1.macd[197] - macd_price1.macd[196]) < 0 and macd_price1.macd_osc[198] < 0 and rsi_arr[186] < 35:
                 #krw = current_krw / 100
                 krw = 10000
                 buy_money = current_price
                 #if krw > 5000:
                 if current_krw >= krw:
                     #upbit.buy_market_order(KRW_coin, krw*0.9995) # 비트코인 매수
-                    data = "now_date : %s --- BUY_COIN!! : %s  rsi : %s macd : %s / %s / %s\n" % (datetime.datetime.now(), current_price, rsi_arr[186], macd_price.macd[196], macd_price.macd[197], macd_price.macd[198])
+                    data = "now_date : %s --- BUY_COIN!! : %s  rsi : %s macd : %s / %s / %s\n" % (datetime.datetime.now(), current_price, rsi_arr[186], macd_price1.macd[196], macd_price1.macd[197], macd_price1.macd[198])
                     file.write(data)
                     file.flush()
                     rsi_gubun = -1
 
         if krw != 0:
             #rsi 60이상(과매수시) 매도
-            if ((macd_price.macd[198] - macd_price.macd[197]) <= 0 and macd_price.macd_osc[198] > 0) or rsi_arr[186] > 60:
+            if ((macd_price3.macd[198] - macd_price3.macd[197]) <= 0 and macd_price3.macd_osc[198] > 0) or rsi_arr[186] > 60:
                 coin_price = get_balance(coin)
                 #upbit.sell_market_order(KRW_coin, coin_price) # 비트코인 전량 매도
-                data = "now_date : %s --- SELL_COIN! : %s  rsi : %s macd : %s / %s / %s\n" % (datetime.datetime.now(), current_price, rsi_arr[186], macd_price.macd[196], macd_price.macd[197], macd_price.macd[198])
+                data = "now_date : %s --- SELL_COIN! : %s  rsi : %s macd : %s / %s / %s\n" % (datetime.datetime.now(), current_price, rsi_arr[186], macd_price1.macd[196], macd_price1.macd[197], macd_price1.macd[198])
                 file.write(data)
                 file.flush()
                 buy_money = 0
@@ -218,13 +222,13 @@ while True:
         
         #추가매수 비법
         if rsi_gubun == -1:
-            if rsi_arr[186] > 35 or macd_price.macd_osc[199] > 0:
+            if rsi_arr[186] > 35 or macd_price1.macd_osc[199] > 0:
                 rsi_gubun = 1
         elif rsi_gubun == 1:
-            if rsi_arr[186] < 35 and macd_price.macd_osc[198] < 0:
+            if rsi_arr[186] < 35 and macd_price1.macd_osc[198] < 0:
                 #krw = current_krw / 100
                 
-                data = "now_date : %s --- BUY_COIN2! : %s  rsi : %s macd : %s / %s / %s\n" % (datetime.datetime.now(), current_price, rsi_arr[186], macd_price.macd[196], macd_price.macd[197], macd_price.macd[198])
+                data = "now_date : %s --- BUY_COIN2! : %s  rsi : %s macd : %s / %s / %s\n" % (datetime.datetime.now(), current_price, rsi_arr[186], macd_price1.macd[196], macd_price1.macd[197], macd_price1.macd[198])
                 rsi_gubun = -1
 
                 #if current_price > avg_price:
