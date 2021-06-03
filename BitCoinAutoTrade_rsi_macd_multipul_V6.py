@@ -175,14 +175,14 @@ while True:
         #macd_price.reset_index(drop=True)
 
         macd_price1 = get_macd(minute_ohlcv['close'], 26, 12, 9)
-        data = "now_date : %s --- macd1 : %s / %s / %s\n" % (datetime.datetime.now(), macd_price1.macd[196], macd_price1.macd[197], macd_price1.macd[198])
-        file.write(data)
-        file.flush()
+        #data = "now_date : %s --- macd1 : %s / %s / %s\n" % (datetime.datetime.now(), macd_price1.macd[196], macd_price1.macd[197], macd_price1.macd[198])
+        #file.write(data)
+        #file.flush()
 
         macd_price3 = get_macd(minute_ohlcv3['close'], 26, 12, 9)
-        data = "now_date : %s --- macd3 : %s / %s / %s\n" % (datetime.datetime.now(), macd_price3.macd[196], macd_price3.macd[197], macd_price3.macd[198])
-        file.write(data)
-        file.flush()
+        #data = "now_date : %s --- macd3 : %s / %s / %s\n" % (datetime.datetime.now(), macd_price3.macd[196], macd_price3.macd[197], macd_price3.macd[198])
+        #file.write(data)
+        #file.flush()
 
         ##########################################################################
         #macd end                                                                #
@@ -248,7 +248,8 @@ while True:
                 buy_money = current_price
                 if current_krw >= krw:
                     upbit.buy_market_order(KRW_coin, krw*0.9995) # 비트코인 매수
-                    data = "now_date : %s --- BUY_COIN2! : %s  rsi : %s macd : %s / %s / %s\n" % (datetime.datetime.now(), current_price, rsi_arr[186], file.write(data)
+                    data = "now_date : %s --- BUY_COIN2! : %s  rsi : %s macd : %s / %s / %s\n" % (datetime.datetime.now(), current_price, rsi_arr[186], macd_price1.macd[196], macd_price1.macd[197], macd_price1.macd[198])
+                    file.write(data)
                     file.flush()
                     rsi_gubun = -1
                 
